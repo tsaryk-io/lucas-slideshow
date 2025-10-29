@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Slideshow</title>
+</head>
+<body>
+
+  <h1>Slideshow</h1>
+
+  <img id="viewer" src="" alt="slideshow image" style="max-width:100%;height:auto;">
+
+  <p>
+    <button onclick="prev()">Prev</button>
+    <button onclick="next()">Next</button>
+    <button onclick="play()">Play</button>
+    <button onclick="stop()">Stop</button>
+  </p>
+
+  <script>
+    // ----- SETTINGS -----
+    var COUNT = 10;           // change to your actual count
+    var LOOP = true;          // true = wrap; false = stop at ends
+    var INTERVAL_MS = 1500;   // autoplay speed
+    // --------------------
+
+    // images/img1.png ... images/imgN.png
+    var files = [];
+    for (var i = 1; i <= COUNT; i++) {
+      files.push("images/img" + i + ".png");
+    }
+
+    // Preload/cache
+    var images = [];
+    for (var j = 0; j < files.length; j++) {
+      var pic = new Image();
+      pic.src = files[j];
+      images.push(pic);
+    }
+
+    var idx = 0;
+    var timer = null;
+
+    function show(i) {
+      if (LOOP) {
+        if (i < 0) i = images.length - 1;
+        if (i >= images.length) i = 0;
+      } else {
+        if (i < 0) i = 0;
+        if (i >= images.length) i = images.length - 1;
+      }
+      idx = i;
+      document.getElementById("viewer").src = images[idx].src;
+    }
+
+    function next() {
+      if (!LOOP && idx === images.length - 1) return;
+      show(idx + 1);
+    }
+
+    function prev() {
+      if (!LOOP && idx === 0) return;
+      show(idx - 1);
+    }
+
+    function play() {
+      if (timer) return;
+      timer = setInterval(function () {
+        if (!LOOP && idx === images.length - 1) {
+          stop();
+        } else {
+          next();
+        }
+      }, INTERVAL_MS);
+    }
+
+    function stop() {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    }
+
+    // start
+    show(0);
+  </script>
+</body>
+</html>
